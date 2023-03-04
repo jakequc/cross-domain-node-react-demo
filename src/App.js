@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
 
-function App() {
+const request = (method = "GET") => {
+  return async (url, body) =>
+    new Promise((resolve) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open(method, url);
+      xhr.send(body);
+      xhr.onreadystatechange = () => {
+        console.log(xhr.readyState, xhr.status);
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          resolve(xhr.responseText);
+        }
+      };
+    });
+};
+
+const baseURL = "http://localhost:8080";
+
+const get = request("GET");
+// const post = request("POST");
+
+const App = () => {
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    get(`${baseURL}/api/user.json`).then((res) => setData(res));
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div>使用react/vue/xxx 写的 页面</div>
+      <div>{data}</div>
     </div>
   );
-}
+};
 
 export default App;
