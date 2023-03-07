@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const request = (method = "GET") => {
   return async (url, body) =>
@@ -7,30 +7,44 @@ const request = (method = "GET") => {
       xhr.open(method, url);
       xhr.send(body);
       xhr.onreadystatechange = () => {
-        console.log(xhr.readyState, xhr.status);
-        if (xhr.readyState == 4 && xhr.status == 200) {
+        if (xhr.readyState === 4 && xhr.status === 200) {
           resolve(xhr.responseText);
         }
       };
     });
 };
 
+// const baseURL = "http://127.0.0.1:8080";
 const baseURL = "http://localhost:8080";
 
 const get = request("GET");
-// const post = request("POST");
+const post = request("POST");
 
 const App = () => {
   const [data, setData] = useState();
+  const [method, setMethod] = useState("get");
 
-  useEffect(() => {
-    get(`${baseURL}/api/user.json`).then((res) => setData(res));
-  }, []);
+  const getRequest = () => {
+    setMethod("get");
+    get(`${baseURL}/api/get`).then((res) => setData(res));
+  };
+
+  const postRequest = () => {
+    setMethod("post");
+    post(`${baseURL}/api/post`).then((res) => setData(res));
+  };
 
   return (
     <div className="App">
-      <div>使用react/vue/xxx 写的 页面</div>
-      <div>{data}</div>
+      <button onClick={getRequest}>get request</button>
+      <br />
+      <br />
+      <button onClick={postRequest}>postRequest</button>
+
+      <div>
+        <br />
+        {method} : {data}
+      </div>
     </div>
   );
 };
